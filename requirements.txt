@@ -1,2 +1,4 @@
 nsepython==2.94
 jupyterlab==4.3.4
+matplotlib
+openpyxl
