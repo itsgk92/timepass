@@ -2,3 +2,6 @@ nsepython==2.94
 jupyterlab==4.3.4
 matplotlib
 openpyxl
+pandas~=2.2.3
+numpy~=2.0.2
+python-dateutil ~=2.8.2
