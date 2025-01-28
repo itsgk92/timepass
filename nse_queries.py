@@ -9,7 +9,10 @@ import utils
 def get_nfo_expiry_history(underlying, start_date: datetime, end_date: datetime) -> pd.DataFrame:
     start_date = utils.date_to_ddmmyyyy(start_date)
     end_date = utils.date_to_ddmmyyyy(end_date)
-    return nse.expiry_history(underlying, start_date, end_date)
+    print(start_date, end_date)
+    expiry_history = nse.expiry_history(underlying, start_date, end_date)
+    print(expiry_history)
+    return expiry_history
 
 
 def get_price_history(underlying, underlying_type: utils.UnderlyingType, start_date, end_date) -> pd.DataFrame:
