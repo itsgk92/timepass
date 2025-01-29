@@ -9,9 +9,11 @@ import utils
 def get_nfo_expiry_history(underlying, start_date: datetime, end_date: datetime) -> pd.DataFrame:
     start_date = utils.date_to_ddmmyyyy(start_date)
     end_date = utils.date_to_ddmmyyyy(end_date)
-    print(start_date, end_date)
     expiry_history = nse.expiry_history(underlying, start_date, end_date)
-    print(expiry_history)
+    # sort ascending
+    expiry_history = pd.Series(expiry_history)
+    expiry_history = expiry_history.apply(pd.to_datetime, format='%d-%b-%Y').sort_values()
+    expiry_history = expiry_history.dt.strftime('%d-%b-%Y').tolist()
     return expiry_history
 
 
