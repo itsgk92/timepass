@@ -1,5 +1,7 @@
 import math
 import numpy as np
+from pandas import DataFrame
+
 import inputs, utils
 import nse_queries
 
@@ -28,16 +30,25 @@ for window_length in volatility_cone_windows:
         annulaized_realized_volatitlies[window_length][expiry_date] = round(annualized_window_volatiltiy.item(), 5)*100
 
 
-sd_window_volatilities = {}
+volat_cone = dict()
 
 for window_length in annulaized_realized_volatitlies:
     values = list(annulaized_realized_volatitlies[window_length].values())
     volatility_array = np.array(values)
     std = round(volatility_array.std(),2)
     mean = round(volatility_array.mean(), 2)
-    vol_max = round(volatility_array.max(), 2)
-    vol_min = round(volatility_array.min(), 2)
-    print(window_length, vol_max, mean, vol_min, std)
+    std_1 = round(mean + (1 * std), 2)
+    std_2 = round(mean + (2 * std), 2)
+    std_n2 = round(mean - (2 * std), 2)
+    std_n1 = round(mean - (1 * std), 2)
+    volt_max = round(volatility_array.max(), 2)
+    volt_min = round(volatility_array.min(), 2)
+    #print(window_length, volt_max, std_2, std_1, mean, std_n1, std_n2, volt_min, std)
+    volat_cone[str(window_length)] = {'volt_max': volt_max, 'std_2': std_2, 'std_1': std_1, 'mean': mean, 'std_n1': std_n1, 'std_n2': std_n2, 'volt_min': volt_min}
 
 
-
+volat_cone_df = DataFrame.from_dict(volat_cone)
+print(volat_cone_df)
+plt = volat_cone_df.T.plot()
+fig = plt.get_figure()
+fig.savefig('out.png')
