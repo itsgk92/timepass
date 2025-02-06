@@ -29,6 +29,5 @@ class CandleStick:
         """Calculate and return the length of upper shadow or wick."""
         return self.high - (self.open if self.open >= self.close else self.close)
     """
-    https: // blog.stackademic.com / a - guide - to - identifying - candlestick - patterns - in -python - using - ta - lib - and -custom - formulas - 1
-    b6ff4b0670f
+    https://blog.stackademic.com/a-guide-to-identifying-candlestick-patterns-in-python-using-ta-lib-and-custom-formulas-1b6ff4b0670f
     """
