@@ -26,8 +26,15 @@ def get_price_history(underlying, underlying_type: utils.UnderlyingType, start_d
         end_date = utils.date_to_ddmmyyyy(end_date)
         df_price_history = nse.equity_history(underlying, "EQ", start_date, end_date)
 
-        df_price_history.rename(columns={'CH_CLOSING_PRICE': "CLOSE", "mTIMESTAMP": "DATE"}, inplace=True)
-
+        df_price_history.rename(columns=
+                                {
+                                    "CH_CLOSING_PRICE": "CLOSE",
+                                    "mTIMESTAMP": "DATE",
+                                    "CH_OPENING_PRICE": "OPEN",
+                                    "CH_TRADE_HIGH_PRICE": "HIGH",
+                                    "CH_TRADE_LOW_PRICE": "LOW"
+                                },
+                                inplace=True)
 
     elif underlying_type == utils.UnderlyingType.Index:
         start_date = utils.date_to_ddMMMyyyy(start_date)
