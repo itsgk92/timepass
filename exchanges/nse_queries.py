@@ -1,3 +1,5 @@
+from typing import List
+
 import nsepython as nse
 import datetime
 import pandas as pd
@@ -48,3 +50,10 @@ def get_price_history(underlying, underlying_type: utils.UnderlyingType, start_d
     df_price_history.sort_values(by='DATE', ascending=True, inplace=True)
     df_price_history['DAILY_RETURN'] = (np.log(df_price_history.CLOSE / df_price_history.CLOSE.shift(1)))
     return df_price_history
+
+
+def get_index_constituents(index_name: str) -> List:
+    constituents = list()
+    index_constituents_df = pd.read_csv('https://www.niftyindices.com/IndexConstituent/ind_nifty100list.csv')
+    constituents = index_constituents_df["Symbol"].tolist()
+    return constituents
