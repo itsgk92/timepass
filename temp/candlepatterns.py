@@ -1,4 +1,4 @@
-from backend.candlestick import CandleStick
+from temp.candlestick import CandleStick
 
 
 class SingleCandlePattern(CandleStick):

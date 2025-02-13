@@ -3,7 +3,7 @@ import numpy as np
 from pandas import DataFrame
 
 import inputs, utils
-import nse_queries
+from exchanges import nse_queries
 
 reference_date = inputs.ref_date
 twelve_months_ago = utils.compute_date_from_reference(reference_date, -12)
