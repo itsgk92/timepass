@@ -36,37 +36,40 @@ def get_nfo_expiry_history(underlying, start_date: datetime, end_date: datetime)
 
 
 def get_price_history(underlying: NSEIndeces or str, underlying_type: utils.UnderlyingType, start_date, end_date) -> pd.DataFrame:
+    try:
+        df_price_history = None
 
-    df_price_history = None
+        if underlying_type == utils.UnderlyingType.EQ:
+            start_date = utils.date_to_ddmmyyyy(start_date)
+            end_date = utils.date_to_ddmmyyyy(end_date)
+            df_price_history = nse.equity_history(underlying, "EQ", start_date, end_date)
 
-    if underlying_type == utils.UnderlyingType.EQ:
-        start_date = utils.date_to_ddmmyyyy(start_date)
-        end_date = utils.date_to_ddmmyyyy(end_date)
-        df_price_history = nse.equity_history(underlying, "EQ", start_date, end_date)
+            df_price_history.rename(columns=
+                                    {
+                                        "CH_CLOSING_PRICE": "CLOSE",
+                                        "mTIMESTAMP": "DATE",
+                                        "CH_OPENING_PRICE": "OPEN",
+                                        "CH_TRADE_HIGH_PRICE": "HIGH",
+                                        "CH_TRADE_LOW_PRICE": "LOW"
+                                    },
+                                    inplace=True)
 
-        df_price_history.rename(columns=
-                                {
-                                    "CH_CLOSING_PRICE": "CLOSE",
-                                    "mTIMESTAMP": "DATE",
-                                    "CH_OPENING_PRICE": "OPEN",
-                                    "CH_TRADE_HIGH_PRICE": "HIGH",
-                                    "CH_TRADE_LOW_PRICE": "LOW"
-                                },
-                                inplace=True)
+        elif underlying_type == utils.UnderlyingType.Index:
+            start_date = utils.date_to_ddMMMyyyy(start_date)
+            end_date = utils.date_to_ddMMMyyyy(end_date)
+            if not type(underlying) is NSEIndeces:  raise  Exception("NSEIndeces expected")
+            df_price_history = nse.index_history(underlying.value, start_date, end_date)
 
-    elif underlying_type == utils.UnderlyingType.Index:
-        start_date = utils.date_to_ddMMMyyyy(start_date)
-        end_date = utils.date_to_ddMMMyyyy(end_date)
-        if not type(underlying) is NSEIndeces:  raise  Exception("NSEIndeces expected")
-        df_price_history = nse.index_history(underlying.value, start_date, end_date)
+            df_price_history.rename(columns={'HistoricalDate': "DATE"}, inplace=True)
 
-        df_price_history.rename(columns={'HistoricalDate': "DATE"}, inplace=True)
+        df_price_history["DATE"] = pd.to_datetime(df_price_history["DATE"], format="%d-%b-%Y")
+        df_price_history["CLOSE"] = df_price_history["CLOSE"].astype(float)
+        df_price_history.sort_values(by='DATE', ascending=True, inplace=True)
+        df_price_history['DAILY_RETURN'] = (np.log(df_price_history.CLOSE / df_price_history.CLOSE.shift(1)))
+        return df_price_history
 
-    df_price_history["DATE"] = pd.to_datetime(df_price_history["DATE"], format="%d-%b-%Y")
-    df_price_history["CLOSE"] = df_price_history["CLOSE"].astype(float)
-    df_price_history.sort_values(by='DATE', ascending=True, inplace=True)
-    df_price_history['DAILY_RETURN'] = (np.log(df_price_history.CLOSE / df_price_history.CLOSE.shift(1)))
-    return df_price_history
+    except Exception as e:
+        print(f"error getting price history for {underlying}, err: {e}")
 
 
 def get_index_constituents(index: NSEIndeces) -> List:
