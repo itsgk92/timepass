@@ -14,13 +14,16 @@ import utils
 class NSEIndeces(Enum):
     NIFTY50 = "NIFTY 50"
     NIFTY100 = "NIFTY 100"
+    NIFTY500 = "NIFTY 500"
     NIFTYMID50 = "NIFTY MIDCAP 50"
+
 
 
 _BaseURL = "https://www.niftyindices.com/IndexConstituent/{0}"
 _IndexConstituentCSV_URL = {
     NSEIndeces.NIFTY50 : _BaseURL.format("ind_nifty50list.csv"),
     NSEIndeces.NIFTY100 : _BaseURL.format("ind_nifty100list.csv"),
+    NSEIndeces.NIFTY500 : _BaseURL.format("ind_nifty500list.csv"),
     NSEIndeces.NIFTYMID50 : _BaseURL.format("ind_niftymidcap50list.csv")
 }
 

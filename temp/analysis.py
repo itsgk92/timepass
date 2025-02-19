@@ -1,4 +1,5 @@
 import datetime
+import json
 import time
 
 import ta.patterns_identifier
@@ -11,10 +12,10 @@ import numpy as np
 
 #today = datetime.datetime.strptime("10-JUN-2024", "%d-%b-%Y")
 today = utils.Today
-five_sessions_ago = utils.compute_date_from_reference(today, trading_sessions=20)
+five_sessions_ago = utils.compute_date_from_reference(today, trading_sessions=10)
 print(today, five_sessions_ago)
 
-stocks_list = nse_queries.get_index_constituents(NSEIndeces.NIFTY100)
+stocks_list = nse_queries.get_index_constituents(NSEIndeces.NIFTY500)
 print(f"Analyzing {len(stocks_list)} stocks")
 stocks_identified_count = 0
 
@@ -31,6 +32,8 @@ for stock in stocks_list:
     price_history_df = None
     time.sleep(.5)
     price_history_df = nse_queries.get_price_history(stock, UnderlyingType.EQ, five_sessions_ago, today)
+    if price_history_df is None:
+        continue
     c_open = price_history_df.OPEN
     close = price_history_df.CLOSE
     high = price_history_df.HIGH
@@ -39,7 +42,7 @@ for stock in stocks_list:
     for pattern_name, pattern_calculator in ta.patterns_identifier.bullish_computers.items():
         price_history_df[pattern_name] = pattern_calculator(c_open, high, low, close)
 
-
+    price_history_df["DATE"] = price_history_df["DATE"].dt.strftime('%Y-%m-%d')
     BullishEngulfing = price_history_df.loc[price_history_df[CandlePatterns.BullishEngulfing.value] > 0]
     if len(BullishEngulfing) != 0:
          is_pattern_identified = True
@@ -56,4 +59,4 @@ for stock in stocks_list:
         stocks_identified_count += 1
 
 
-print(f"Identified {stocks_identified_count}: {stocks_identified}")
+print(f"Identified {stocks_identified_count}: {json.dumps(stocks_identified)}")
