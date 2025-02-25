@@ -1,14 +1,11 @@
-import datetime
 import json
 import time
 
-import ta.patterns_identifier
 import utils
 from exchanges import nse_queries
 from exchanges.nse_queries import NSEIndeces
 from ta.patterns_identifier import CandlePatterns
 from utils import UnderlyingType
-import numpy as np
 
 #today = datetime.datetime.strptime("10-JUN-2024", "%d-%b-%Y")
 today = utils.Today
@@ -39,7 +36,7 @@ for stock in stocks_list:
     high = price_history_df.HIGH
     low = price_history_df.LOW
 
-    for pattern_name, pattern_calculator in ta.patterns_identifier.bullish_computers.items():
+    for pattern_name, pattern_calculator in backend.ta.patterns_identifier.bullish_computers.items():
         price_history_df[pattern_name] = pattern_calculator(c_open, high, low, close)
 
     price_history_df["DATE"] = price_history_df["DATE"].dt.strftime('%Y-%m-%d')
